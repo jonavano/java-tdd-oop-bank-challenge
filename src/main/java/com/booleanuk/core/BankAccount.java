@@ -8,8 +8,8 @@ import java.util.Map;
 
 public abstract class BankAccount {
 
-    private String accountName;
-    private Branch branch;
+    private final String accountName;
+    private final Branch branch;
     private List<Map.Entry<LocalDate, Float>> transactions;
 
     public BankAccount(String accountName, Branch branch) {
@@ -24,7 +24,7 @@ public abstract class BankAccount {
     public String withdraw(float amount) {
         boolean overdraftAllowed = branch.wasApprovedOverdraft(this);
 
-        if (amount < 0)
+        if (amount <= 0)
             return "Not a valid transaction";
 
         if (getBalance() < amount && !overdraftAllowed)
@@ -36,7 +36,7 @@ public abstract class BankAccount {
     }
 
     public String deposit(float amount) {
-        if (amount < 0)
+        if (amount <= 0)
             return "Not a valid transaction";
 
         transactions.add(Map.entry(LocalDate.now(),amount));

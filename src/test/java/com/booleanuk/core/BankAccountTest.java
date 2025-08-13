@@ -44,19 +44,19 @@ class BankAccountTest {
         account.withdraw(500);
         Assertions.assertEquals(2, account.getStatements().size());
     }
-
-    @Test
-    void getStatementsToString() {
-        account.deposit(500);
-        account.deposit(52.8f);
-        account.withdraw(442.27f);
-
-        account.requestOverdraft();
-        branch.processOverdraft(account, "42", true);
-        account.withdraw(1000);
-        Assertions.assertEquals("", account.getStatementsToString());
-//          TODO tostring implementation
-    }
+// This test was to see the string personally
+//    @Test
+//    void getStatementsToString() {
+//        account.deposit(500);
+//        account.deposit(52.8f);
+//        account.withdraw(442.27f);
+//
+//        account.requestOverdraft();
+//        branch.processOverdraft(account, "42", true);
+//        account.withdraw(1000);
+//        Assertions.assertEquals("", account.getStatementsToString());
+//
+//    }
 
 
     @Test
