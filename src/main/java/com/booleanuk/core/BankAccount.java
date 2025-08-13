@@ -1,5 +1,6 @@
 package com.booleanuk.core;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,7 @@ public abstract class BankAccount {
 
     private String accountName;
     private Branch branch;
-    private List<Map.Entry<LocalDateTime, Float>> transactions;
+    private List<Map.Entry<LocalDate, Float>> transactions;
 
     public BankAccount(String accountName, Branch branch) {
         this.accountName = accountName;
@@ -30,7 +31,7 @@ public abstract class BankAccount {
             return "Not enough balance";
 
 
-        transactions.add(Map.entry(LocalDateTime.now(), - amount));
+        transactions.add(Map.entry(LocalDate.now(), - amount));
         return "Withdraw completed";
     }
 
@@ -38,16 +39,29 @@ public abstract class BankAccount {
         if (amount < 0)
             return "Not a valid transaction";
 
-        transactions.add(Map.entry(LocalDateTime.now(),amount));
+        transactions.add(Map.entry(LocalDate.now(),amount));
         return "Amount successfully deposited";
     }
 
-    public List<Map.Entry<LocalDateTime, Float>> getStatements() {
+    public List<Map.Entry<LocalDate, Float>> getStatements() {
         return transactions;
     }
 
     public String getStatementsToString() {
-        return "";
+        StringBuilder sb = new StringBuilder();
+        sb.append("\ndate \t\t | | transactions \t\t | | balance\n");
+        for (int i = 0; i < transactions.size(); i++) {
+            var transaction = transactions.get(i);
+            sb.append(transaction.getKey() +
+                    "\t\t | | " +
+                    transaction.getValue() +
+                    "\t\t | | " +
+                    getBalance(i +1)
+
+                    + "\n");
+
+        }
+        return sb.toString();
     }
 
     public String requestOverdraft() {

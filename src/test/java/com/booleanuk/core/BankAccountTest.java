@@ -45,11 +45,18 @@ class BankAccountTest {
         Assertions.assertEquals(2, account.getStatements().size());
     }
 
-//    @Test
-//    void getStatementsToString() {
-//        Assertions.assertEquals("", account.getStatementsToString());
+    @Test
+    void getStatementsToString() {
+        account.deposit(500);
+        account.deposit(52.8f);
+        account.withdraw(442.27f);
+
+        account.requestOverdraft();
+        branch.processOverdraft(account, "42", true);
+        account.withdraw(1000);
+        Assertions.assertEquals("", account.getStatementsToString());
 //          TODO tostring implementation
-//    }
+    }
 
 
     @Test
