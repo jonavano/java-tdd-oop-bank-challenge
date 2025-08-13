@@ -8,23 +8,25 @@ import java.util.Map;
 public abstract class BankAccount {
 
     private String accountName;
-    private String branch;
+    private Branch branch;
     private List<Map.Entry<LocalDateTime, Float>> transactions;
 
-    private float overDraftAmountAllowed;
-
-    public BankAccount(String accountName, String branch) {
+    public BankAccount(String accountName, Branch branch) {
         this.accountName = accountName;
-        this.branch = branch;
+
         this.transactions = new ArrayList<>();
-        overDraftAmountAllowed = -1;
+        this.branch = branch;
+        if (branch != null)
+            branch.addAccount(this);
     }
 
     public String withdraw(float amount) {
+        boolean overdraftAllowed = branch.wasApprovedOverdraft(this);
+
         if (amount < 0)
             return "Not a valid transaction";
 
-        if (getBalance() < amount)
+        if (getBalance() < amount && !overdraftAllowed)
             return "Not enough balance";
 
 
@@ -49,11 +51,7 @@ public abstract class BankAccount {
     }
 
     public String requestOverdraft() {
-        if (overDraftAmountAllowed != -1)
-            return "Overdraft already approved";
-
-        return "Overdraft requested";
-
+        return branch.requestOverdraft(this);
     }
 
     public float getBalance() {
@@ -71,10 +69,6 @@ public abstract class BankAccount {
             balance += transaction.getValue();
         }
         return balance;
-
     }
-
-
-
 
 }

@@ -1,19 +1,20 @@
 package com.booleanuk.core;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class BankAccountTest {
 
     private static BankAccount account;
+    private static Branch branch;
 
-    @BeforeAll
-    static void beforeAll() {
-        account = new SavingsAccount("Sakamoto Ryouma", "Showacho");
-
-
+    @BeforeEach
+    void beforeEach() {
+        branch = new OsakaBranch();
+        account = new SavingsAccount("Sakamoto Ryouma", branch);
     }
+
 
     @Test
     void withdraw() {
@@ -22,6 +23,12 @@ class BankAccountTest {
         Assertions.assertEquals("Withdraw completed", account.withdraw(200));
         Assertions.assertEquals("Not enough balance", account.withdraw(400));
         Assertions.assertEquals("Not a valid transaction", account.withdraw(-500f));
+
+        account.requestOverdraft();
+        branch.processOverdraft(account, "42", true);
+        Assertions.assertEquals("Withdraw completed", account.withdraw(400));
+
+
     }
 
     @Test
@@ -47,8 +54,9 @@ class BankAccountTest {
 
     @Test
     void requestOverdraft() {
-        Assertions.assertEquals("Overdraft requested", account.requestOverdraft());
-//        TODO implement overdraft and test it being already approved
+        Assertions.assertEquals("Overdraft has been requested", account.requestOverdraft());
+        Assertions.assertEquals("Already requested overdraft", account.requestOverdraft());
+        branch.processOverdraft(account, "42", true);
         Assertions.assertEquals("Overdraft already approved", account.requestOverdraft());
     }
 
@@ -60,10 +68,11 @@ class BankAccountTest {
         account.withdraw(442.27f);
         Assertions.assertEquals(110.53, account.getBalance(), 0.001);
         Assertions.assertEquals(552.8f, account.getBalance(2), 0.001);
-//        TODO implement going overdraft and being in minus balance
+
+        account.requestOverdraft();
+        branch.processOverdraft(account, "42", true);
+        account.withdraw(1000);
+        Assertions.assertEquals(-889.47, account.getBalance(), 0.001);
     }
 
-    @Test
-    void testGetBalance() {
-    }
 }
